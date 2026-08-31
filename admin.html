@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Edy's Diner — Administration</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Oswald:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --cream:#FAF5EC; --paper:#FFFDF8; --red:#C62B2B; --red-dark:#9E1F1F;
+    --teal:#1F7A7A; --ink:#2B2620; --muted:#6E6559; --check:#2B2620; --line:#D8D0BF;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{
+    font-family:'Inter',system-ui,sans-serif; background:var(--cream); color:var(--ink);
+    -webkit-font-smoothing:antialiased;
+  }
+  .checker{
+    height:12px; background:
+      repeating-conic-gradient(var(--check) 0% 25%, var(--paper) 0% 50%)
+      0 0/28px 28px; opacity:.9;
+  }
+  header{
+    background:linear-gradient(180deg,#fff 0%,var(--paper) 60%,#F3EDDF 100%);
+    border-bottom:3px solid var(--red); padding:20px;
+    display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap;
+  }
+  header .left{ display:flex; align-items:center; gap:14px }
+  header .logo{ height:50px; width:auto }
+  header h1{ font-family:'Oswald',sans-serif; text-transform:uppercase; letter-spacing:.14em; font-size:18px; color:var(--red-dark) }
+  header .sub1{ font-size:11.5px; color:var(--muted) }
+  header a.view, .btn-out{
+    background:var(--teal); color:#fff; text-decoration:none; font-weight:600;
+    font-size:12.5px; padding:9px 16px; border-radius:8px; border:none; cursor:pointer; font-family:inherit;
+  }
+  header a.view:hover{ background:#175F5F }
+  .btn-out{ background:#fff; color:var(--ink); border:1px solid var(--line) }
+  .btn-out:hover{ color:var(--red); border-color:var(--red) }
+  .toolbar{
+    position:sticky; top:0; z-index:5; background:var(--paper);
+    border-bottom:1px solid var(--line); padding:12px 16px;
+    display:flex; gap:10px; flex-wrap:wrap; align-items:center;
+  }
+  .toolbar .pills{ display:flex; gap:6px; overflow-x:auto; flex:1; min-width:200px }
+  .pill{
+    border:1px solid var(--line); background:#fff; border-radius:999px; padding:6px 13px;
+    font-size:12px; font-weight:600; cursor:pointer; white-space:nowrap; color:var(--ink);
+  }
+  .pill.active{ background:var(--red); border-color:var(--red); color:#fff }
+  .pill .n{ opacity:.6; font-weight:500 }
+  .btn{
+    border:none; border-radius:8px; padding:9px 15px; font-weight:600; font-size:12.5px;
+    cursor:pointer; font-family:inherit;
+  }
+  .btn-add{ background:var(--red); color:#fff }
+  .btn-add:hover{ background:var(--red-dark) }
+  .btn[disabled]{ opacity:.5; cursor:wait }
+  input.search{
+    border:1px solid var(--line); border-radius:8px; padding:8px 12px; font-size:13px;
+    font-family:inherit; width:180px; background:#fff;
+  }
+  main{ max-width:760px; margin:0 auto; padding:20px 16px 80px }
+  .sec-title{
+    font-family:'Oswald',sans-serif; text-transform:uppercase; letter-spacing:.16em;
+    font-size:15px; color:var(--red-dark); margin:26px 0 4px; display:flex; align-items:center; gap:10px;
+  }
+  .sec-title::after{ content:""; flex:1; height:1px; background:var(--line) }
+  .sec-title .cnt{ color:var(--muted); letter-spacing:0; font-family:'Inter'; font-weight:500; font-size:12px }
+  .row{
+    background:#fff; border:1px solid var(--line); border-radius:12px;
+    padding:12px 14px; margin-top:8px; display:flex; align-items:center; gap:12px;
+  }
+  .row.rupture{ background:#FBF7F0; opacity:.75 }
+  .row .info{ flex:1; min-width:0 }
+  .row .nm{ font-weight:600; font-size:14.5px; display:flex; align-items:center; gap:8px; flex-wrap:wrap }
+  .row .nm .strike{ text-decoration:line-through; text-decoration-thickness:2px }
+  .row .ds{ color:var(--muted); font-size:12px; margin-top:2px; line-height:1.4;
+            overflow:hidden; text-overflow:ellipsis; white-space:nowrap; max-width:440px }
+  .row .px{ font-family:'Oswald',sans-serif; font-weight:700; font-size:15px; color:var(--red-dark); white-space:nowrap }
+  .row .px small{ font-family:'Inter'; font-weight:500; font-size:11px; color:var(--muted) }
+  .badge{
+    background:var(--teal); color:#fff; font-size:9.5px; font-weight:700; letter-spacing:.08em;
+    text-transform:uppercase; padding:2px 8px; border-radius:999px;
+  }
+  .badge.epuise{ background:var(--check) }
+  .ops{ display:flex; align-items:center; gap:8px }
+  .icon-btn{
+    background:#fff; border:1px solid var(--line); border-radius:8px; width:34px; height:34px;
+    cursor:pointer; font-size:14px; display:flex; align-items:center; justify-content:center;
+  }
+  .icon-btn:hover{ border-color:var(--red); color:var(--red) }
+  .icon-btn.del:hover{ background:var(--red); color:#fff; border-color:var(--red) }
+  .switch{ position:relative; width:44px; height:24px; display:inline-block; flex-shrink:0 }
+  .switch input{ opacity:0; width:0; height:0 }
+  .slider{
+    position:absolute; inset:0; background:#D9D2C4; border-radius:999px; cursor:pointer; transition:.2s;
+  }
+  .slider::before{
+    content:""; position:absolute; height:18px; width:18px; left:3px; top:3px;
+    background:#fff; border-radius:50%; transition:.2s; box-shadow:0 1px 2px rgba(0,0,0,.25);
+  }
+  .switch input:checked + .slider{ background:var(--check) }
+  .switch input:checked + .slider::before{ transform:translateX(20px) }
+  .overlay{
+    position:fixed; inset:0; background:rgba(0,0,0,.5); z-index:20;
+    display:none; align-items:flex-start; justify-content:center; padding:40px 16px; overflow-y:auto;
+  }
+  .overlay.open{ display:flex }
+  .modal{
+    background:var(--paper); border-radius:16px; max-width:520px; width:100%;
+    padding:24px; box-shadow:0 20px 60px rgba(0,0,0,.35); border-top:4px solid var(--red);
+  }
+  .modal h2{ font-family:'Oswald',sans-serif; text-transform:uppercase; letter-spacing:.14em; font-size:17px; color:var(--red-dark); margin-bottom:16px }
+  .field{ margin-bottom:14px }
+  .field label{ display:block; font-size:12px; font-weight:600; margin-bottom:5px; color:var(--ink) }
+  .field input, .field select, .field textarea{
+    width:100%; border:1px solid var(--line); border-radius:8px; padding:9px 11px;
+    font-size:13.5px; font-family:inherit; background:#fff; color:var(--ink);
+  }
+  .field textarea{ min-height:64px; resize:vertical }
+  .field .hint{ font-size:11px; color:var(--muted); margin-top:4px }
+  .modal .actions{ display:flex; justify-content:flex-end; gap:10px; margin-top:18px }
+  .btn-save{ background:var(--teal); color:#fff }
+  .btn-save:hover{ background:#175F5F }
+  .btn-cancel{ background:#fff; border:1px solid var(--line); color:var(--muted) }
+  .empty-state{ text-align:center; color:var(--muted); padding:30px 0; font-style:italic }
+  .foot{
+    margin-top:36px; border-top:2px dashed var(--line); padding-top:16px;
+    font-size:11.5px; color:var(--muted); line-height:1.7; text-align:center;
+  }
+  /* --- écran de connexion --- */
+  .login-wrap{
+    min-height:100vh; display:flex; align-items:center; justify-content:center; padding:24px;
+    background:
+      radial-gradient(ellipse 70% 40% at 50% 0%, rgba(198,43,43,.07), transparent),
+      var(--cream);
+  }
+  .login-card{
+    background:var(--paper); border:1px solid var(--line); border-radius:18px;
+    max-width:400px; width:100%; padding:34px 30px; box-shadow:0 20px 50px rgba(0,0,0,.12);
+    border-top:4px solid var(--red); text-align:center;
+  }
+  .login-card .logo{ height:56px; width:auto; margin-bottom:8px }
+  .login-card h1{ font-family:'Oswald',sans-serif; text-transform:uppercase; letter-spacing:.16em; font-size:17px; color:var(--red-dark) }
+  .login-card p.sub{ font-size:12.5px; color:var(--muted); margin:8px 0 22px }
+  .login-card .field{ text-align:left }
+  .login-card .field input{ padding:11px 13px; font-size:14px }
+  .login-card .btn-login{ width:100%; background:var(--red); color:#fff; padding:12px; font-size:14px; letter-spacing:.06em }
+  .login-card .btn-login:hover{ background:var(--red-dark) }
+  .login-card .err{
+    background:#FBE9E7; color:var(--red-dark); border:1px solid var(--red);
+    border-radius:8px; font-size:12.5px; padding:9px 12px; margin-top:12px; display:none;
+  }
+  .login-card .setup{
+    background:var(--accent-soft,#F4EFE6); border:1px dashed var(--line); border-radius:10px;
+    font-size:12px; color:var(--muted); line-height:1.7; padding:14px; margin-top:14px; text-align:left;
+  }
+  .login-card .setup b{ color:var(--ink) }
+  .status-bar{
+    background:var(--teal); color:#fff; font-size:12px; text-align:center; padding:6px 10px;
+  }
+  @media(max-width:560px){
+    .row{ flex-wrap:wrap }
+    .row .px{ margin-left:auto }
+  }
+</style>
+</head>
+<body>
+
+<!-- ================= ÉCRAN DE CONNEXION ================= -->
+<div class="login-wrap" id="loginScreen" style="display:none">
+  <div class="login-card">
+    <img class="logo" src="logo.png" alt="Edy's Diner">
+    <h1>Administration</h1>
+    <p class="sub">Espace réservé à l'équipe Edy's Diner</p>
+    <div class="field">
+      <label>Identifiant ou email</label>
+      <input id="lg_email" type="text" autocomplete="username" placeholder="patron">
+    </div>
+    <div class="field">
+      <label>Mot de passe</label>
+      <input id="lg_pass" type="password" autocomplete="current-password" placeholder="••••••••">
+    </div>
+    <button class="btn btn-login" id="btnLogin">Se connecter</button>
+    <div class="err" id="lg_err"></div>
+    <div class="setup" id="lg_setup" style="display:none"></div>
+  </div>
+</div>
+
+<!-- ================= TABLEAU DE BORD ================= -->
+<div id="app" style="display:none">
+<header>
+  <div class="left">
+    <img class="logo" src="logo.png" alt="Edy's Diner">
+    <div>
+      <h1>Administration</h1>
+      <div class="sub1">Modifiez la carte — visible immédiatement sur le menu</div>
+    </div>
+  </div>
+  <div style="display:flex;gap:8px">
+    <a class="view" href="index.html" target="_blank">Voir la carte →</a>
+    <button class="btn-out" id="btnLogout">Se déconnecter</button>
+  </div>
+</header>
+
+<div class="toolbar">
+  <div class="pills" id="pills"></div>
+  <input class="search" id="search" type="search" placeholder="Rechercher…">
+  <button class="btn btn-add" id="btnAdd">+ Ajouter un item</button>
+</div>
+
+<main id="list"></main>
+
+<div class="foot">
+  Connecté à <b>Supabase</b> — chaque modification est enregistrée en ligne et
+  visible instantanément sur la carte (mise à jour de l'écran du client incluse).
+</div>
+</div>
+
+<div class="overlay" id="overlay">
+  <div class="modal">
+    <h2 id="modalTitle">Ajouter un item</h2>
+    <div class="field">
+      <label>Section</label>
+      <select id="f_section"></select>
+    </div>
+    <div class="field">
+      <label>Nom</label>
+      <input id="f_nom" type="text" placeholder="Ex : Classic Edy's">
+    </div>
+    <div class="field">
+      <label>Description</label>
+      <textarea id="f_desc" placeholder="Steak 180 g, cheddar maison…"></textarea>
+    </div>
+    <div class="field">
+      <label>Prix</label>
+      <input id="f_prix" type="text" placeholder="14,90 €">
+    </div>
+    <div class="field">
+      <label>Options de prix (facultatif)</label>
+      <input id="f_detail" type="text" placeholder="/ double 22,50 · triple 25,00">
+      <div class="hint">Texte affiché en petit à côté du prix.</div>
+    </div>
+    <div class="field">
+      <label>Badge (facultatif)</label>
+      <select id="f_badge">
+        <option value="">— Aucun —</option>
+        <option>Fait Maison</option>
+        <option>Épicé</option>
+        <option>Best-seller</option>
+        <option>Avec Alcool</option>
+        <option>Du Mois</option>
+        <option>Challenge</option>
+      </select>
+    </div>
+    <div class="field">
+      <label style="display:flex;align-items:center;gap:8px;margin:0">
+        <input type="checkbox" id="f_rupture" style="width:auto">
+        En rupture de stock (affiché « Épuisé » sur la carte)
+      </label>
+    </div>
+    <div class="actions">
+      <button class="btn btn-cancel" id="btnCancel">Annuler</button>
+      <button class="btn btn-save" id="btnSave">Enregistrer</button>
+    </div>
+  </div>
+</div>
+
+<script src="config.js"></script>
+<script src="data.js"></script>
+<script>
+(function(){
+  "use strict";
+
+  var CFG = window.CONFIG || {};
+  var SUP = CFG.supabase || {};
+  var SECTIONS = window.EDY_SECTIONS || [];
+  var SESSION_KEY = "edy_admin_session";
+  var items = [];
+  var filter = "all";
+  var editingId = null;
+
+  // ---------- petite couche Supabase (auth + REST, sans dépendance) ----------
+  var supa = {
+    base: (SUP.url || "").replace(/\/+$/, ""),
+    key: SUP.anonKey || "",
+    async request(path, opts){
+      opts = opts || {};
+      var headers = Object.assign({ apikey: this.key }, opts.headers || {});
+      var s = this.session();
+      if (s) headers.Authorization = "Bearer " + s.access_token;
+      var res = await fetch(this.base + path, Object.assign({}, opts, { headers: headers }));
+      if (res.status === 401 && s && this.tryRefresh()){
+        headers.Authorization = "Bearer " + this.session().access_token;
+        res = await fetch(this.base + path, Object.assign({}, opts, { headers: headers }));
+      }
+      return res;
+    },
+    session(){
+      try { return JSON.parse(localStorage.getItem(SESSION_KEY)) || null; } catch(e){ return null; }
+    },
+    saveSession(s){ localStorage.setItem(SESSION_KEY, JSON.stringify(s)); },
+    async tryRefresh(){
+      var s = this.session();
+      if (!s || !s.refresh_token) return false;
+      var res = await fetch(this.base + "/auth/v1/token?grant_type=refresh_token", {
+        method: "POST",
+        headers: { apikey: this.key, "Content-Type": "application/json" },
+        body: JSON.stringify({ refresh_token: s.refresh_token })
+      });
+      if (!res.ok) { this.clearSession(); return false; }
+      var d = await res.json();
+      this.saveSession({ access_token: d.access_token, refresh_token: d.refresh_token,
+                         expires_at: Date.now() + (d.expires_in || 3600) * 1000, email: s.email });
+      return true;
+    },
+    clearSession(){ localStorage.removeItem(SESSION_KEY); },
+    async login(email, password){
+      var res = await fetch(this.base + "/auth/v1/token?grant_type=password", {
+        method: "POST",
+        headers: { apikey: this.key, "Content-Type": "application/json" },
+        body: JSON.stringify({ email: email, password: password })
+      });
+      if (!res.ok){
+        var e = await res.json().catch(function(){ return {}; });
+        throw new Error(e.error_description || e.msg || e.message || "Identifiants incorrects.");
+      }
+      var d = await res.json();
+      this.saveSession({ access_token: d.access_token, refresh_token: d.refresh_token,
+                         expires_at: Date.now() + (d.expires_in || 3600) * 1000, email: email });
+    },
+    async logout(){
+      var s = this.session();
+      if (s){
+        try { await fetch(this.base + "/auth/v1/logout", { method: "POST",
+          headers: { apikey: this.key, Authorization: "Bearer " + s.access_token } }); } catch(e){}
+      }
+      this.clearSession();
+    },
+    // données
+    async list(){
+      var res = await this.request("/rest/v1/items?select=*&order=sort_order.asc", { headers: { Accept: "application/json" } });
+      if (res.status === 401) return { auth: false };
+      if (!res.ok) return { error: "Erreur de chargement (" + res.status + ")" };
+      var rows = await res.json();
+      return { rows: rows.map(fromDb) };
+    },
+    async insert(it){
+      var res = await this.request("/rest/v1/items", {
+        method: "POST", headers: { "Content-Type": "application/json", Prefer: "return=representation" },
+        body: JSON.stringify([toDb(it)])
+      });
+      return res.ok;
+    },
+    async update(id, it){
+      var res = await this.request("/rest/v1/items?id=eq." + id, {
+        method: "PATCH", headers: { "Content-Type": "application/json", Prefer: "return=representation" },
+        body: JSON.stringify(toDb(it))
+      });
+      return res.ok;
+    },
+    async remove(id){
+      var res = await this.request("/rest/v1/items?id=eq." + id, { method: "DELETE" });
+      return res.ok;
+    }
+  };
+
+  function toDb(it){
+    return { section: it.section, nom: it.nom, descr: it.desc || "", prix: it.prix || "",
+             detail: it.detail || "", badge: it.badge || "", rupture: !!it.rupture };
+  }
+  function fromDb(r){
+    return { id: r.id, section: r.section, nom: r.nom, desc: r.descr || "", prix: r.prix || "",
+             detail: r.detail || "", badge: r.badge || "", rupture: !!r.rupture };
+  }
+
+  // ---------- UI ----------
+  function esc(s){
+    return String(s == null ? "" : s)
+      .replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+  }
+  function secName(id){ for (var i=0;i<SECTIONS.length;i++) if (SECTIONS[i][0]===id) return SECTIONS[i][1]; return id; }
+  function countIn(sec){ return items.filter(function(it){ return it.section===sec; }).length; }
+
+  function show(el){ el.style.display = ""; }
+  function hide(el){ el.style.display = "none"; }
+
+  function renderPills(){
+    var html = '<button class="pill' + (filter==="all"?" active":"") + '" data-f="all">Tous <span class="n">(' + items.length + ')</span></button>';
+    SECTIONS.forEach(function(s){
+      var n = countIn(s[0]);
+      html += '<button class="pill' + (filter===s[0]?" active":"") + '" data-f="' + s[0] + '">' + esc(s[1]) + ' <span class="n">(' + n + ')</span></button>';
+    });
+    document.getElementById("pills").innerHTML = html;
+  }
+
+  function renderList(){
+    var q = document.getElementById("search").value.toLowerCase();
+    var shown = 0, html = "";
+    SECTIONS.forEach(function(s){
+      var sid = s[0];
+      if (filter !== "all" && filter !== sid) return;
+      var its = items.filter(function(it){
+        return it.section === sid &&
+          (!q || (it.nom+" "+(it.desc||"")).toLowerCase().indexOf(q) !== -1);
+      });
+      if (!its.length) return;
+      html += '<div class="sec-title">' + esc(s[1]) + ' <span class="cnt">' + its.length + ' item(s)</span></div>';
+      its.forEach(function(it){
+        shown++;
+        html += '<div class="row' + (it.rupture?" rupture":"") + '">' +
+          '<div class="info">' +
+            '<div class="nm">' +
+              (it.rupture ? '<span class="strike">' + esc(it.nom) + '</span>' : esc(it.nom)) +
+              (it.badge ? ' <span class="badge">' + esc(it.badge) + '</span>' : '') +
+              (it.rupture ? ' <span class="badge epuise">Épuisé</span>' : '') +
+            '</div>' +
+            (it.desc ? '<div class="ds">' + esc(it.desc) + '</div>' : '') +
+          '</div>' +
+          '<div class="px">' + esc(it.prix || "—") + (it.detail ? ' <small>' + esc(it.detail) + '</small>' : '') + '</div>' +
+          '<div class="ops">' +
+            '<label class="switch" title="En rupture de stock"><input type="checkbox" data-id="' + it.id + '" class="tg-rupture"' + (it.rupture?" checked":"") + '><span class="slider"></span></label>' +
+            '<button class="icon-btn" data-act="edit" data-id="' + it.id + '" title="Modifier">✏️</button>' +
+            '<button class="icon-btn del" data-act="del" data-id="' + it.id + '" title="Supprimer">🗑</button>' +
+          '</div>' +
+        '</div>';
+      });
+    });
+    if (!shown) html = '<div class="empty-state">Aucun item ne correspond.</div>';
+    document.getElementById("list").innerHTML = html;
+  }
+
+  function render(){ renderPills(); renderList(); }
+
+  function openModal(it){
+    editingId = it ? it.id : null;
+    document.getElementById("modalTitle").textContent = it ? "Modifier l'item" : "Ajouter un item";
+    document.getElementById("f_section").value = it ? it.section : SECTIONS[0][0];
+    document.getElementById("f_nom").value = it ? it.nom : "";
+    document.getElementById("f_desc").value = it ? (it.desc||"") : "";
+    document.getElementById("f_prix").value = it ? (it.prix||"") : "";
+    document.getElementById("f_detail").value = it ? (it.detail||"") : "";
+    document.getElementById("f_badge").value = it ? (it.badge||"") : "";
+    document.getElementById("f_rupture").checked = it ? !!it.rupture : false;
+    document.getElementById("overlay").classList.add("open");
+  }
+  function closeModal(){ document.getElementById("overlay").classList.remove("open"); }
+
+  async function saveModal(){
+    var nom = document.getElementById("f_nom").value.trim();
+    if (!nom){ alert("Le nom est obligatoire."); return; }
+    var obj = {
+      section: document.getElementById("f_section").value,
+      nom: nom,
+      desc: document.getElementById("f_desc").value.trim(),
+      prix: document.getElementById("f_prix").value.trim(),
+      detail: document.getElementById("f_detail").value.trim(),
+      badge: document.getElementById("f_badge").value,
+      rupture: document.getElementById("f_rupture").checked
+    };
+    var ok = editingId ? await supa.update(editingId, obj) : await supa.insert(obj);
+    if (!ok){ alert("Erreur d'enregistrement — vérifiez votre connexion."); return; }
+    closeModal();
+    await loadItems();
+  }
+
+  async function loadItems(){
+    var res = await supa.list();
+    if (res.auth === false){ showLogin(); return; }
+    if (res.error){ document.getElementById("list").innerHTML = '<div class="empty-state">' + esc(res.error) + '</div>'; return; }
+    items = res.rows;
+    render();
+  }
+
+  // ---------- connexion / déconnexion ----------
+  function showLogin(msg){
+    hide(document.getElementById("app"));
+    show(document.getElementById("loginScreen"));
+    var setup = document.getElementById("lg_setup");
+    if (!SUP.url || !SUP.key){
+      setup.style.display = "";
+      setup.innerHTML = "<b>Configuration requise</b><br>" +
+        "Renseignez l'URL et la clé anon du projet Supabase dans <b>config.js</b> " +
+        "(voir GUIDE_MISE_EN_PLACE.md, étape 5).";
+    } else {
+      setup.style.display = "none";
+    }
+    if (msg){
+      var err = document.getElementById("lg_err");
+      err.style.display = "";
+      err.textContent = msg;
+    }
+  }
+  function showApp(){
+    hide(document.getElementById("loginScreen"));
+    show(document.getElementById("app"));
+    loadItems();
+  }
+
+  document.getElementById("btnLogin").addEventListener("click", async function(){
+    var id = document.getElementById("lg_email").value.trim();
+    var pass = document.getElementById("lg_pass").value;
+    if (!id || !pass){ return; }
+    // identifiant simple -> username@domaine ; email complet accepté tel quel
+    var loginDomain = (CFG.supabase.loginDomain || "edys-diner.fr").replace(/^@/, "");
+    var email = id.indexOf("@") >= 0 ? id : id + "@" + loginDomain;
+    var btn = this;
+    btn.disabled = true; btn.textContent = "Connexion…";
+    try {
+      await supa.login(email, pass);
+      document.getElementById("lg_err").style.display = "none";
+      showApp();
+    } catch(e){
+      var err = document.getElementById("lg_err");
+      err.style.display = ""; err.textContent = e.message;
+    }
+    btn.disabled = false; btn.textContent = "Se connecter";
+  });
+  document.getElementById("btnLogout").addEventListener("click", async function(){
+    await supa.logout();
+    showLogin();
+  });
+  document.getElementById("lg_pass").addEventListener("keydown", function(e){
+    if (e.key === "Enter") document.getElementById("btnLogin").click();
+  });
+
+  // ---------- interactions tableau de bord ----------
+  document.getElementById("pills").addEventListener("click", function(e){
+    var b = e.target.closest(".pill"); if (!b) return;
+    filter = b.dataset.f; render();
+  });
+  document.getElementById("search").addEventListener("input", renderList);
+  document.getElementById("btnAdd").addEventListener("click", function(){ openModal(null); });
+  document.getElementById("btnCancel").addEventListener("click", closeModal);
+  document.getElementById("btnSave").addEventListener("click", saveModal);
+  document.getElementById("list").addEventListener("click", function(e){
+    var btn = e.target.closest("[data-act]"); if (!btn) return;
+    var id = btn.dataset.id;
+    if (btn.dataset.act === "edit"){
+      var it = items.find(function(x){ return x.id === id; });
+      if (it) openModal(it);
+    } else if (btn.dataset.act === "del"){
+      var it2 = items.find(function(x){ return x.id === id; });
+      if (it2 && confirm('Supprimer « ' + it2.nom + ' » ?')){
+        supa.remove(id).then(loadItems);
+      }
+    }
+  });
+  document.getElementById("list").addEventListener("change", async function(e){
+    if (!e.target.classList.contains("tg-rupture")) return;
+    var it = items.find(function(x){ return x.id === e.target.dataset.id; });
+    if (it){
+      it.rupture = e.target.checked;
+      await supa.update(it.id, it);
+      loadItems();
+    }
+  });
+
+  // ---------- init ----------
+  document.getElementById("f_section").innerHTML = SECTIONS.map(function(s){
+    return '<option value="' + s[0] + '">' + esc(s[1]) + '</option>';
+  }).join("");
+
+  (async function init(){
+    if (!SUP.url || !SUP.key){ showLogin(); return; }
+    var s = supa.session();
+    if (s && s.expires_at && Date.now() > s.expires_at - 60000){
+      var ok = await supa.tryRefresh();
+      if (!ok){ showLogin(); return; }
+    }
+    if (supa.session()) showApp(); else showLogin();
+  })();
+})();
+</script>
+</body>
+</html>

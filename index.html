@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Edy's Diner — La Carte</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Oswald:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --cream:#FAF5EC; --paper:#FFFDF8; --red:#C62B2B; --red-dark:#9E1F1F;
+    --teal:#1F7A7A; --ink:#2B2620; --muted:#6E6559; --check:#2B2620;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{
+    font-family:'Inter',system-ui,sans-serif; background:var(--cream); color:var(--ink);
+    -webkit-font-smoothing:antialiased;
+  }
+  .checker{
+    height:14px; background:
+      repeating-conic-gradient(var(--check) 0% 25%, var(--paper) 0% 50%)
+      0 0/28px 28px; opacity:.9;
+  }
+  .checker.invert{ filter:invert(1) }
+  .chrome{
+    height:10px; margin:0 auto; border-radius:5px;
+    background:linear-gradient(180deg,#fff,#c9c4b8 45%,#8f8a7d 50%,#fff 55%,#e4e0d4);
+  }
+  header{
+    background:linear-gradient(180deg,#fff 0%,var(--paper) 60%,#F3EDDF 100%);
+    border-bottom:3px solid var(--red); text-align:center; padding:34px 20px 26px;
+  }
+  .logo{ max-width:210px; height:auto; filter:drop-shadow(0 2px 0 rgba(0,0,0,.06)) }
+  .tagline{ font-family:'Pacifico',cursive; color:var(--red); font-size:19px; margin-top:12px }
+  .slogan{
+    font-family:'Oswald',sans-serif; text-transform:uppercase; letter-spacing:.28em;
+    font-size:11px; color:var(--teal); margin-top:6px; font-weight:500;
+  }
+  nav{
+    position:sticky; top:0; z-index:5; background:var(--red);
+    padding:10px 12px; overflow-x:auto; white-space:nowrap;
+    box-shadow:0 3px 8px rgba(0,0,0,.25);
+  }
+  nav a{
+    display:inline-block; color:#fff; text-decoration:none;
+    font-family:'Oswald',sans-serif; text-transform:uppercase; letter-spacing:.12em;
+    font-size:12.5px; font-weight:600; padding:7px 14px; border-radius:999px;
+  }
+  nav a:hover{ background:rgba(255,255,255,.18) }
+  main{ max-width:560px; margin:0 auto; padding:6px 18px 60px }
+  section{ margin-top:34px }
+  h2{
+    font-family:'Oswald',sans-serif; text-transform:uppercase; font-size:21px;
+    letter-spacing:.18em; color:var(--red-dark); text-align:center; font-weight:700;
+  }
+  h2 .banner{
+    display:inline-block; background:var(--red); color:#fff; padding:5px 18px;
+    letter-spacing:.22em; box-shadow:0 2px 0 var(--red-dark);
+  }
+  .sub{
+    text-align:center; font-family:'Pacifico',cursive; color:var(--teal); font-size:15px; margin:8px 0 18px;
+  }
+  .item{
+    display:flex; justify-content:space-between; align-items:baseline;
+    padding:11px 0; border-bottom:1px dashed #D8D0BF;
+  }
+  .item:last-child{ border-bottom:none }
+  .item .name{ font-weight:600; font-size:15.5px }
+  .item .desc{ color:var(--muted); font-size:12.5px; margin-top:2px; line-height:1.45 }
+  .dots{ flex:1; margin:0 8px; border-bottom:2px dotted #C4BAA6; transform:translateY(-3px) }
+  .price{ font-family:'Oswald',sans-serif; font-weight:700; font-size:16.5px; color:var(--red-dark); white-space:nowrap }
+  .price small{ font-size:11px; color:var(--muted); font-family:'Inter'; font-weight:500 }
+  .badge{
+    display:inline-block; background:var(--teal); color:#fff; font-size:9.5px;
+    font-weight:700; letter-spacing:.1em; text-transform:uppercase; padding:2.5px 8px;
+    border-radius:999px; vertical-align:2px; margin-left:6px;
+  }
+  /* --- rupture de stock --- */
+  .item.rupture{ opacity:.55 }
+  .item.rupture .name{ text-decoration:line-through; text-decoration-thickness:2px }
+  .item.rupture .price{ color:var(--muted); font-family:'Inter'; font-weight:600; font-size:12.5px; letter-spacing:.06em }
+  .badge.epuise{ background:var(--check); color:#fff }
+  .demo-note{
+    background:#FBE9E7; border:1px solid var(--red); color:var(--red-dark);
+    border-radius:10px; padding:10px 14px; font-size:12px; text-align:center; margin:14px 0 0;
+  }
+  .demo-note a{ color:var(--red-dark); font-weight:700 }
+  .footnote{
+    background:var(--check); color:var(--paper); border-radius:14px; padding:18px 20px;
+    margin-top:34px; font-size:12.5px; line-height:1.7; text-align:center;
+  }
+  .footnote b{ font-family:'Oswald',sans-serif; letter-spacing:.14em; text-transform:uppercase; color:#fff }
+  footer{ text-align:center; padding:26px 18px 44px; color:var(--muted); font-size:12px }
+  footer .chrome{ max-width:240px; margin-bottom:20px }
+  .hours{ font-family:'Oswald',sans-serif; letter-spacing:.08em; color:var(--ink); text-transform:uppercase; font-size:12px; line-height:2 }
+  .empty{ text-align:center; color:var(--muted); font-style:italic; font-size:13px; padding:12px 0 4px }
+  @media(min-width:700px){ main{max-width:640px} }
+</style>
+</head>
+<body>
+<div class="checker"></div>
+<header>
+  <img class="logo" src="logo.png" alt="Edy's Diner">
+  <div class="tagline">Taste the good old days</div>
+  <div class="slogan">Burgers smashés • 100% bœuf frais français</div>
+</header>
+<nav id="nav"></nav>
+<div class="checker invert"></div>
+<main id="menu"></main>
+<footer>
+  <div class="chrome"></div>
+  <div class="hours">Ouvert 7j/7 — midi &amp; soir</div>
+  <div style="margin-top:6px">Edy's Diner — l'Amérique dans l'assiette</div>
+</footer>
+<div class="checker"></div>
+
+<script src="config.js"></script>
+<script src="data.js"></script>
+<script>
+(function(){
+  "use strict";
+  var LS_KEY = "edy_menu_v7";
+  var CONFIG = window.CONFIG || {};
+  var SECTIONS = window.EDY_SECTIONS || [];
+  var SEED = window.EDY_SEED || [];
+
+  function seed(){ return JSON.parse(JSON.stringify(SEED)); }
+
+  function esc(s){
+    return String(s == null ? "" : s)
+      .replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;")
+      .replace(/"/g,"&quot;").replace(/'/g,"&#39;");
+  }
+
+  // ---- source de données ----
+  function parseCSV(text){
+    // simple parser CSV (supporte ";" et ","), en-têtes en première ligne
+    var rows = [], cur = [], field = "", inQ = false;
+    for (var i = 0; i < text.length; i++){
+      var c = text[i];
+      if (inQ){ if (c === '"'){ if (text[i+1] === '"'){ field += '"'; i++; } else inQ = false; } else field += c; }
+      else if (c === '"') inQ = true;
+      else if (c === ";" || c === ","){ cur.push(field); field = ""; }
+      else if (c === "\n"){ cur.push(field); rows.push(cur); cur = []; field = ""; }
+      else if (c !== "\r") field += c;
+    }
+    if (field !== "" || cur.length){ cur.push(field); rows.push(cur); }
+    return rows;
+  }
+
+  function csvToItems(text){
+    var rows = parseCSV(text);
+    if (!rows.length) return [];
+    var hdr = rows[0].map(function(h){ return h.trim().toLowerCase(); });
+    var idx = {};
+    ["section","nom","description","prix","rupture"].forEach(function(k){
+      idx[k] = hdr.indexOf(k);
+    });
+    var out = [];
+    for (var r = 1; r < rows.length; r++){
+      var row = rows[r];
+      if (row.length < 2) continue;
+      var get = function(k){ return idx[k] >= 0 ? (row[idx[k]] || "").trim() : ""; };
+      var nom = get("nom");
+      if (!nom) continue;
+      out.push({
+        section: get("section") || "burgers",
+        nom: nom,
+        desc: get("description"),
+        prix: get("prix"),
+        detail: "",
+        badge: "",
+        rupture: /oui|x|1|true/i.test(get("rupture"))
+      });
+    }
+    return out;
+  }
+
+  function getItems(cb){
+    if (CONFIG.source === "sheets" && CONFIG.sheetsUrl){
+      fetch(CONFIG.sheetsUrl, {cache:"no-store"}).then(function(res){ return res.text(); })
+        .then(function(t){ cb(csvToItems(t)); })
+        .catch(function(){ cb(null); });
+      return;
+    }
+    if (CONFIG.source === "supabase" && CONFIG.supabase.url && CONFIG.supabase.anonKey){
+      fetch(CONFIG.supabase.url + "/rest/v1/items?select=*&order=sort_order", {
+        headers: { apikey: CONFIG.supabase.anonKey, Authorization: "Bearer " + CONFIG.supabase.anonKey }
+      }).then(function(res){ return res.json(); })
+        .then(function(data){ cb(data || []); })
+        .catch(function(){ cb(null); });
+      return;
+    }
+    // local / démo
+    var local = null;
+    try { local = JSON.parse(localStorage.getItem(LS_KEY)); } catch(e){}
+    cb(local && local.length ? local : seed());
+  }
+
+  // ---- rendu ----
+  function itemHTML(it){
+    var badge = "";
+    if (it.badge) badge = '<span class="badge">' + esc(it.badge) + '</span>';
+    var prix = it.rupture
+      ? '<div class="price">Épuisé</div>'
+      : '<div class="price">' + esc(it.prix || "—") + (it.detail ? ' <small>' + esc(it.detail) + '</small>' : '') + '</div>';
+    return '<div class="item' + (it.rupture ? ' rupture' : '') + '">' +
+      '<div><div class="name">' + esc(it.nom) + badge + '</div>' +
+      (it.desc ? '<div class="desc">' + esc(it.desc) + '</div>' : '') +
+      '</div><div class="dots"></div>' + prix + '</div>';
+  }
+
+  function render(items){
+    var nav = document.getElementById("nav");
+    var menu = document.getElementById("menu");
+    nav.innerHTML = SECTIONS.map(function(s){
+      return '<a href="#' + s[0] + '">' + esc(s[1]) + '</a>';
+    }).join("");
+
+    var isDemo = CONFIG.source === "local";
+    var html = isDemo
+      ? '<div class="demo-note">Mode démo : les modifications faites dans <a href="admin.html">l\'administration</a> s\'affichent ici. Voir <a href="admin.html">l\'interface admin</a>.</div>'
+      : "";
+    var count = 0;
+    SECTIONS.forEach(function(s){
+      var sid = s[0], title = s[1], sub = s[2];
+      var its = items.filter(function(it){ return it.section === sid; });
+      if (!its.length) return;
+      count += its.length;
+      html += '<section id="' + sid + '"><h2><span class="banner">' + esc(title) + '</span></h2>' +
+              '<p class="sub">' + esc(sub) + '</p>';
+      if (sid !== "kids") html += '<div class="chrome" style="margin:0 auto 10px"></div>';
+      its.forEach(function(it){ html += itemHTML(it); });
+      html += '</section>';
+    });
+    if (!count) html += '<p class="empty">Carte vide — ajoutez des items dans l\'administration.</p>';
+    menu.innerHTML = html;
+  }
+
+  getItems(function(items){
+    if (!items){
+      document.getElementById("menu").innerHTML =
+        '<p class="empty">Impossible de charger la carte (vérifier la config).</p>';
+      return;
+    }
+    render(items);
+  });
+})();
+</script>
+</body>
+</html>

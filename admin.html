@@ -152,11 +152,6 @@
     background:#FBE9E7; color:var(--red-dark); border:1px solid var(--red);
     border-radius:8px; font-size:12.5px; padding:9px 12px; margin-top:12px; display:none;
   }
-  .login-card .setup{
-    background:var(--accent-soft,#F4EFE6); border:1px dashed var(--line); border-radius:10px;
-    font-size:12px; color:var(--muted); line-height:1.7; padding:14px; margin-top:14px; text-align:left;
-  }
-  .login-card .setup b{ color:var(--ink) }
   .status-bar{
     background:var(--teal); color:#fff; font-size:12px; text-align:center; padding:6px 10px;
   }
@@ -184,7 +179,6 @@
     </div>
     <button class="btn btn-login" id="btnLogin">Se connecter</button>
     <div class="err" id="lg_err"></div>
-    <div class="setup" id="lg_setup" style="display:none"></div>
   </div>
 </div>
 
@@ -477,15 +471,6 @@
   function showLogin(msg){
     hide(document.getElementById("app"));
     show(document.getElementById("loginScreen"));
-    var setup = document.getElementById("lg_setup");
-    if (!SUP.url || !SUP.key){
-      setup.style.display = "";
-      setup.innerHTML = "<b>Configuration requise</b><br>" +
-        "Renseignez l'URL et la clé anon du projet Supabase dans <b>config.js</b> " +
-        "(voir GUIDE_MISE_EN_PLACE.md, étape 5).";
-    } else {
-      setup.style.display = "none";
-    }
     if (msg){
       var err = document.getElementById("lg_err");
       err.style.display = "";
